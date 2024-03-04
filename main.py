@@ -42,11 +42,22 @@ class Snake:
             self.direction = (0, -1)
 
 
+class Apple:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+        self.apple = pygame.rect.Rect(self.x, self.y, 10, 10)
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, 'red', self.apple)
+
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Snake")
     snake = Snake()
+    apple = Apple(100, 100)
     clock = pygame.time.Clock()
     running = True
     while running:
@@ -55,6 +66,7 @@ def main():
                 running = False
         screen.fill("black")
         snake.draw(screen)
+        apple.draw(screen)
         snake.move()
         pygame.display.flip()
         clock.tick(10)
