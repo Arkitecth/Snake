@@ -13,6 +13,7 @@ class Snake:
                           (HEIGHT / 2), CELL_SIZE, CELL_SIZE),
                      Rect((WIDTH / 2) + 40, (HEIGHT / 2), CELL_SIZE, CELL_SIZE)]
         self.direction = (0, 0)
+        self.collided = False
 
     def draw(self, screen):
         for parts in self.body:
@@ -41,6 +42,13 @@ class Snake:
         if keys[pygame.K_UP] and self.direction != (0, 1):
             self.direction = (0, -1)
 
+    def check_wall_collissions(self):
+        tail = self.body[0]
+        # Top Vertical
+        if tail.y <= 40 or tail.y >= 540 or tail.x <= 0 or tail.x >= 540:
+            print("Collission detected")
+            self.direction = (0, 0)
+
 
 class Apple:
     def __init__(self, x, y) -> None:
@@ -52,24 +60,36 @@ class Apple:
         pygame.draw.rect(screen, 'red', self.apple)
 
 
+class Game:
+    def __init__(self) -> None:
+        pygame.init()
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Snake")
+        self.snake = Snake()
+        self.apple = Apple(100, 100)
+        self.clock = pygame.time.Clock()
+        self.running = True
+
+    def draw(self):
+        self.snake.draw(self.screen)
+        self.apple.draw(self.screen)
+
+    def run(self):
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+            self.screen.fill("black")
+            self.draw()
+            self.snake.move()
+            self.snake.check_wall_collissions()
+            pygame.display.flip()
+            self.clock.tick(10)
+
+
 def main():
-    pygame.init()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Snake")
-    snake = Snake()
-    apple = Apple(100, 100)
-    clock = pygame.time.Clock()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        screen.fill("black")
-        snake.draw(screen)
-        apple.draw(screen)
-        snake.move()
-        pygame.display.flip()
-        clock.tick(10)
+    g = Game()
+    g.run()
     pygame.quit()
 
 
